@@ -37,13 +37,50 @@ struct ContentView<ViewModel: CalculatorViewModelProtocol>: View {
             .disabled(isCalculating)
             .scaleEffect(isCalculating ? 0.95 : 1.0)
             .accessibilityIdentifier("calculate")
+        ZStack {
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color.purple.opacity(0.8),
+                    Color.blue.opacity(0.6),
+                    Color.indigo.opacity(0.8)
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
             
             if let myResult = result {
                 resultView(result: myResult)
+                    // Clear Button
+                    if showResultWihValue.0 {
+                        Button(action: clearCalculator) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "arrow.clockwise")
+                                Text("Clear & Start Over")
+                            }
+                            .font(.subheadline)
+                            .foregroundColor(.blue)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 44)
+                            .background(Color.blue.opacity(0.2))
+                            .cornerRadius(12)
+                        }
+                    }
+                }
+                .padding(25)
+                .background(.ultraThinMaterial)
+                .cornerRadius(24)
             }
             
             Spacer()
         }
+    }
+    
+    private func clearCalculator() {
+        withAnimation(.easeInOut) {
+            userText = ""
+            errorMessage = ""
+            showResultWihValue = (false, nil)
         }
         .padding()
     }
