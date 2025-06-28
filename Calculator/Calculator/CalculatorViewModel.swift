@@ -44,7 +44,7 @@ class CalculatorViewModel: CalculatorViewModelProtocol {
         
         // Check for custom delimiter
         if numbers.hasPrefix("//") {
-            let components = numbers.components(separatedBy: "\n")
+            let components = numbersToProcess.components(separatedBy: "\n")
             if components.count >= 2 {
                 // Extract custom delimiter from first line
                 let customDelimiter = String(components[0].dropFirst(2))
