@@ -8,6 +8,8 @@
 import XCTest
 
 final class CalculatorUITests: XCTestCase {
+    
+    let app = XCUIApplication()
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -23,12 +25,44 @@ final class CalculatorUITests: XCTestCase {
     }
 
     @MainActor
-    func testExample() throws {
+    func testAddition() throws {
         // UI tests must launch the application that they test.
-        let app = XCUIApplication()
         app.launch()
 
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        enterTextInTextField(textToBeEntered: "1,2")
+        clickCalculateButton()
+       
+        let resultField = app.staticTexts["Result 3"]
+        XCTAssertEqual(resultField.exists, true)
+    }
+    
+    @MainActor
+    func testNegativeNumbers() throws {
+        // UI tests must launch the application that they test.
+        app.launch()
+
+        enterTextInTextField(textToBeEntered: "-3,4")
+        clickCalculateButton()
+       
+        let resultField = app.staticTexts["Negative numbers not allowed: -3"]
+        XCTAssertEqual(resultField.exists, true)
+        
+        let OkButton = app.buttons["OK"]
+        XCTAssertEqual(OkButton.exists, true)
+        OkButton.tap()
+    }
+    
+    func enterTextInTextField(textToBeEntered: String) {
+        let textFieldToEnter = app.textFields["numbersTextField"]
+        XCTAssertEqual(textFieldToEnter.exists, true)
+        textFieldToEnter.tap()
+        textFieldToEnter.typeText(textToBeEntered)
+    }
+    
+    func clickCalculateButton() {
+        let calculateButton = app.buttons["calculate"]
+        XCTAssertEqual(calculateButton.exists, true)
+        calculateButton.tap()
     }
 
     @MainActor
