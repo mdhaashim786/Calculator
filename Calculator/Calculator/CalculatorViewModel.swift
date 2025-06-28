@@ -20,12 +20,15 @@ class CalculatorViewModel: CalculatorViewModelProtocol {
         guard !numbers.isEmpty else { return 0 }
         
         // To recognise the new line include "\\n"
-        var allowedDelimiters = CharacterSet(charactersIn: ",\\n")
-        var numbersToProcess = numbers
+        var allowedDelimiters = CharacterSet(charactersIn: ",\n")
+        // TextField does not support multiline input. When we type \n in text field
+        // it treats as "\" and "n". To escape the backslash it adds another "\n".
+        // So removing that
+        var numbersToProcess = numbers.replacingOccurrences(of: "\\n", with: "\n")
         
         // Check for custom delimiter
         if numbers.hasPrefix("//") {
-            let components = numbers.components(separatedBy: "\\n")
+            let components = numbers.components(separatedBy: "\n")
             if components.count >= 2 {
                 // Extract custom delimiter from first line
                 let customDelimiter = String(components[0].dropFirst(2))
