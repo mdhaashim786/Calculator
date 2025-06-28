@@ -26,6 +26,7 @@ struct ContentView<ViewModel: CalculatorViewModelProtocol>: View {
                 .fontWeight(.bold)
             
             TextField("Enter numbers ", text: $userText)
+                .accessibilityIdentifier("numbersTextField")
                 .textFieldStyle(RoundedBorderTextFieldStyle())
             
             Button("Calculate", action: {
@@ -35,6 +36,7 @@ struct ContentView<ViewModel: CalculatorViewModelProtocol>: View {
                     showAlertWithTitle = (true, error.localizedDescription)
                 }
             })
+            .accessibilityIdentifier("calculate")
             
             if let myResult = result {
                 Text("Result \(myResult)")
