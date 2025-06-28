@@ -12,6 +12,7 @@ struct ContentView<ViewModel: CalculatorViewModelProtocol>: View {
     @ObservedObject var viewModel: ViewModel
     @State var userText: String = ""
     @State var result: Int?
+    @State var isCalculating: Bool = false
     
     @State var showAlertWithTitle: (Bool, String) = (false,"")
     
@@ -29,13 +30,12 @@ struct ContentView<ViewModel: CalculatorViewModelProtocol>: View {
                 .accessibilityIdentifier("numbersTextField")
                 .textFieldStyle(RoundedBorderTextFieldStyle())
             
-            Button("Calculate", action: {
-                do {
-                    result = try viewModel.add(userText)
-                } catch {
-                    showAlertWithTitle = (true, error.localizedDescription)
-                }
-            })
+            // Calculate Button
+            Button(action: calculateSum) {
+                buttonView()
+            }
+            .disabled(isCalculating)
+            .scaleEffect(isCalculating ? 0.95 : 1.0)
             .accessibilityIdentifier("calculate")
             
             if let myResult = result {
@@ -49,6 +49,43 @@ struct ContentView<ViewModel: CalculatorViewModelProtocol>: View {
             return Alert(title: Text(showAlertWithTitle.1), dismissButton: .default(Text("OK")))
         }
         .padding()
+    }
+    
+    func calculateSum() {
+        isCalculating = true
+        
+        // Add delay for animation effect
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+            do {
+                result = try viewModel.add(userText)
+            } catch {
+                showAlertWithTitle = (true, error.localizedDescription)
+            }
+            isCalculating = false
+        }
+    }
+    
+    func buttonView() -> some View {
+        HStack(spacing: 12) {
+            if isCalculating {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+            }
+            Text(isCalculating ? "Calculating..." : "Calculate Sum")
+                .font(.headline)
+                .fontWeight(.semibold)
+        }
+        .foregroundColor(.white)
+        .frame(maxWidth: .infinity)
+        .frame(height: 56)
+        .background(
+            LinearGradient(
+                gradient: Gradient(colors: [Color.blue, Color.purple]),
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+        )
+        .cornerRadius(16)
     }
     
     func resultView(result: Int) -> some View {
