@@ -20,8 +20,25 @@ class CalculatorViewModel: CalculatorViewModelProtocol {
         guard !numbers.isEmpty else { return 0 }
         
         // To recognise the new line include "\\n"
-        let allowedDelimiters = CharacterSet(charactersIn: ",\\n")
-        let numbersToProcess = numbers
+        var allowedDelimiters = CharacterSet(charactersIn: ",\\n")
+        var numbersToProcess = numbers
+        
+        // Check for custom delimiter
+        if numbers.hasPrefix("//") {
+            let components = numbers.components(separatedBy: "\\n")
+            print(components)
+            if components.count >= 2 {
+                // Extract custom delimiter from first line
+                let delimiterLine = components[0]
+                let customDelimiter = String(delimiterLine.dropFirst(2)) // Remove "//"
+                
+                // Add custom delimiter to character set
+                allowedDelimiters.insert(charactersIn: customDelimiter)
+                
+                // Use remaining string after delimiter definition
+                numbersToProcess = components[1]
+            }
+        }
         
         let numberStrings = numbersToProcess.components(separatedBy: allowedDelimiters)
         
