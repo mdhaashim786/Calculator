@@ -65,7 +65,7 @@ final class CalculatorTests: XCTestCase {
         }
         
         XCTAssertThrowsError(try calculatorVM.add("Incubyte")) { error in
-            XCTAssertEqual(error.localizedDescription, "Please enter only numbers")
+            XCTAssertEqual(error.localizedDescription, "Please enter valid input")
         }
         
     }

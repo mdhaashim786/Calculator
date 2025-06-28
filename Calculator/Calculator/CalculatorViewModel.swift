@@ -23,7 +23,7 @@ enum CalculatorError: Error, LocalizedError {
             let numbersString = numbers.map(String.init).joined(separator: ", ")
             return "Negative numbers not allowed: \(numbersString)"
         case .noNumberEntered:
-            return "Please enter only numbers"
+            return "Please enter valid input"
         }
     }
 }
