@@ -39,10 +39,7 @@ struct ContentView<ViewModel: CalculatorViewModelProtocol>: View {
             .accessibilityIdentifier("calculate")
             
             if let myResult = result {
-                Text("Result \(myResult)")
-                    .font(.headline)
-                    .foregroundColor(.blue)
-                    .padding()
+                resultView(result: myResult)
             }
             
             Spacer()
@@ -52,6 +49,33 @@ struct ContentView<ViewModel: CalculatorViewModelProtocol>: View {
             return Alert(title: Text(showAlertWithTitle.1), dismissButton: .default(Text("OK")))
         }
         .padding()
+    }
+    
+    func resultView(result: Int) -> some View {
+        VStack(spacing: 10) {
+            HStack {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundColor(.green)
+                Text("Result")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                Spacer()
+            }
+            
+            HStack {
+                Text("\(result)")
+                    .font(.system(size: 30, weight: .bold))
+                    .foregroundColor(.green)
+                Spacer()
+            }
+        }
+        .padding()
+        .background(Color.green.opacity(0.1))
+        .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.green.opacity(0.3), lineWidth: 1)
+        )
     }
 }
 
