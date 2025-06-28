@@ -55,6 +55,7 @@ class CalculatorViewModel: CalculatorViewModelProtocol {
         }
         
         let numberStrings = numbersToProcess.components(separatedBy: allowedDelimiters)
+            .map { $0.trimmingCharacters(in: .whitespaces) }
         
         // Convert to integers
         let numbersArray = numberStrings.compactMap { Int($0) }
