@@ -9,7 +9,7 @@ import SwiftUI
 import Foundation
 
 protocol CalculatorViewModelProtocol: ObservableObject {
-    func add(_ numbers: String) -> Int
+    func add(_ numbers: String) throws -> Int
 }
 
 // Custom error type for negative numbers
@@ -27,7 +27,7 @@ enum CalculatorError: Error, LocalizedError {
 
 class CalculatorViewModel: CalculatorViewModelProtocol {
     
-    func add(_ numbers: String) -> Int {
+    func add(_ numbers: String) throws -> Int {
         
         // Handle empty string
         guard !numbers.isEmpty else { return 0 }
@@ -59,23 +59,14 @@ class CalculatorViewModel: CalculatorViewModelProtocol {
         // Convert to integers
         let numbersArray = numberStrings.compactMap { Int($0) }
         
-        do {
-            try checkForNegativeNumbers(numbersArray)
-        } catch {
-            // show alert
-            return -1
+        // Check for negative numbers
+        let negativeNumbers = numbersArray.filter { $0 < 0 }
+        if !negativeNumbers.isEmpty {
+            throw CalculatorError.negativeNumbers(negativeNumbers)
         }
         
         // Use higher order functions
         return numbersArray.reduce(0) { result, number in result + number }
-    }
-    
-    func checkForNegativeNumbers(_ numbers: [Int]) throws {
-        // Check for negative numbers
-        let negativeNumbers = numbers.filter { $0 < 0 }
-        if !negativeNumbers.isEmpty {
-            throw CalculatorError.negativeNumbers(negativeNumbers)
-        }
     }
     
 }
