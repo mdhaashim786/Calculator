@@ -26,11 +26,9 @@ class CalculatorViewModel: CalculatorViewModelProtocol {
         // Check for custom delimiter
         if numbers.hasPrefix("//") {
             let components = numbers.components(separatedBy: "\\n")
-            print(components)
             if components.count >= 2 {
                 // Extract custom delimiter from first line
-                let delimiterLine = components[0]
-                let customDelimiter = String(delimiterLine.dropFirst(2)) // Remove "//"
+                let customDelimiter = String(components[0].dropFirst(2))
                 
                 // Add custom delimiter to character set
                 allowedDelimiters.insert(charactersIn: customDelimiter)
@@ -45,13 +43,8 @@ class CalculatorViewModel: CalculatorViewModelProtocol {
         // Convert to integers
         let numbersArray = numberStrings.compactMap { Int($0) }
         
-        var sumOfNumbers = 0
-        
-        for num in numbersArray {
-            sumOfNumbers += num
-        }
-        
-        return sumOfNumbers
+        // Use higher order functions
+        return numbersArray.reduce(0) { result, number in result + number }
     }
     
 }
