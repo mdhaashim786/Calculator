@@ -15,12 +15,15 @@ protocol CalculatorViewModelProtocol: ObservableObject {
 // Custom error type for negative numbers
 enum CalculatorError: Error, LocalizedError {
     case negativeNumbers([Int])
+    case noNumberEntered
     
     var errorDescription: String? {
         switch self {
         case .negativeNumbers(let numbers):
             let numbersString = numbers.map(String.init).joined(separator: ", ")
             return "Negative numbers not allowed: \(numbersString)"
+        case .noNumberEntered:
+            return "Please enter only numbers"
         }
     }
 }
@@ -59,6 +62,10 @@ class CalculatorViewModel: CalculatorViewModelProtocol {
         
         // Convert to integers
         let numbersArray = numberStrings.compactMap { Int($0) }
+        
+        if numbersArray.isEmpty {
+            throw CalculatorError.noNumberEntered
+        }
         
         // Check for negative numbers
         let negativeNumbers = numbersArray.filter { $0 < 0 }
