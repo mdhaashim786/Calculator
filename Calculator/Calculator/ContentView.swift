@@ -8,12 +8,18 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @State var userText: String = ""
+    
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+            Text("String Calulator")
+                .font(.title)
+            TextField("Enter string", text: $userText)
+            Button("Caluclate", action: {
+                print(userText)
+            })
+            Spacer()
         }
         .padding()
     }
