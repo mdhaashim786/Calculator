@@ -44,9 +44,6 @@ struct ContentView<ViewModel: CalculatorViewModelProtocol>: View {
             
             Spacer()
         }
-        .alert(isPresented: $showAlertWithTitle.0) {
-            
-            return Alert(title: Text(showAlertWithTitle.1), dismissButton: .default(Text("OK")))
         }
         .padding()
     }
@@ -88,6 +85,31 @@ struct ContentView<ViewModel: CalculatorViewModelProtocol>: View {
         .cornerRadius(16)
     }
     
+    func errorView() -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundColor(.red)
+                .font(.title2)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Error")
+                    .font(.headline)
+                    .foregroundColor(.red)
+                Text(errorMessage)
+                    .font(.subheadline)
+                    .foregroundColor(.red.opacity(0.8))
+            }
+            Spacer()
+        }
+        .padding()
+        .background(Color.red.opacity(0.1))
+        .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.red.opacity(0.3), lineWidth: 1)
+        )
+    }
+    
     func resultView(result: Int) -> some View {
         VStack(spacing: 10) {
             HStack {
@@ -101,8 +123,8 @@ struct ContentView<ViewModel: CalculatorViewModelProtocol>: View {
             
             HStack {
                 Text("\(result)")
-                    .font(.system(size: 30, weight: .bold))
-                    .foregroundColor(.green)
+                    .font(.system(size: 40, weight: .bold))
+                    .foregroundColor(.black)
                 Spacer()
             }
         }
