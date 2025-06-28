@@ -69,6 +69,7 @@ struct ContentView<ViewModel: CalculatorViewModelProtocol>: View {
                                 .padding(.vertical, 8)
                                 .background(Color.clear)
                                 .scrollContentBackground(.hidden)
+                                .accessibilityIdentifier("numbersTextField")
                         }
                         .frame(height: 100)
                     }
@@ -77,6 +78,7 @@ struct ContentView<ViewModel: CalculatorViewModelProtocol>: View {
                     Button(action: calculateSum) {
                         buttonView()
                     }
+                    .accessibilityIdentifier("calculate")
                     .disabled(isCalculating)
                     .scaleEffect(isCalculating ? 0.95 : 1.0)
                     

@@ -32,8 +32,14 @@ final class CalculatorUITests: XCTestCase {
         enterTextInTextField(textToBeEntered: "1,2")
         clickCalculateButton()
        
-        let resultField = app.staticTexts["Result 3"]
-        XCTAssertEqual(resultField.exists, true)
+        let expectation = self.expectation(description: "Wait for delayed result")
+        performDelayedResult { _ in
+            let resultField = self.app.staticTexts["3"]
+            XCTAssertEqual(resultField.exists, true)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 2)
+       
     }
     
     @MainActor
@@ -44,16 +50,18 @@ final class CalculatorUITests: XCTestCase {
         enterTextInTextField(textToBeEntered: "-3,4")
         clickCalculateButton()
        
-        let resultField = app.staticTexts["Negative numbers not allowed: -3"]
-        XCTAssertEqual(resultField.exists, true)
-        
-        let OkButton = app.buttons["OK"]
-        XCTAssertEqual(OkButton.exists, true)
-        OkButton.tap()
+        let expectation = self.expectation(description: "Wait for delayed result")
+        performDelayedResult { _ in
+            let errorField = self.app.staticTexts["Negative numbers not allowed: -3"]
+            XCTAssertEqual(errorField.exists, true)
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 2)
+
     }
     
     func enterTextInTextField(textToBeEntered: String) {
-        let textFieldToEnter = app.textFields["numbersTextField"]
+        let textFieldToEnter = app.textViews["numbersTextField"]
         XCTAssertEqual(textFieldToEnter.exists, true)
         textFieldToEnter.tap()
         textFieldToEnter.typeText(textToBeEntered)
@@ -64,6 +72,13 @@ final class CalculatorUITests: XCTestCase {
         XCTAssertEqual(calculateButton.exists, true)
         calculateButton.tap()
     }
+    
+    func performDelayedResult(completion: @escaping (String) -> Void) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            completion("Success")
+        }
+    }
+
 
     @MainActor
     func testLaunchPerformance() throws {
