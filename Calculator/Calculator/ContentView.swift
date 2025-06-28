@@ -13,6 +13,8 @@ struct ContentView<ViewModel: CalculatorViewModelProtocol>: View {
     @State var userText: String = ""
     @State var result: Int?
     
+    @State var showAlertWithTitle: (Bool, String) = (false,"")
+    
     init(viewModel: ViewModel) {
         self.viewModel = viewModel
     }
@@ -27,7 +29,11 @@ struct ContentView<ViewModel: CalculatorViewModelProtocol>: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
             
             Button("Calculate", action: {
-                result = viewModel.add(userText)
+                do {
+                    result = try viewModel.add(userText)
+                } catch {
+                    showAlertWithTitle = (true, error.localizedDescription)
+                }
             })
             
             if let myResult = result {
@@ -38,6 +44,10 @@ struct ContentView<ViewModel: CalculatorViewModelProtocol>: View {
             }
             
             Spacer()
+        }
+        .alert(isPresented: $showAlertWithTitle.0) {
+            
+            return Alert(title: Text(showAlertWithTitle.1), dismissButton: .default(Text("OK")))
         }
         .padding()
     }
