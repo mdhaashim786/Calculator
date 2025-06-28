@@ -32,92 +32,88 @@ struct ContentView<ViewModel: CalculatorViewModelProtocol>: View {
             )
             .ignoresSafeArea()
             
-            VStack(spacing: 30) {
+            ScrollView {
                 
-                Text("String Calculator")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-                    .padding(.vertical, 25)
-                
-                VStack(spacing: 25) {
-                    // Input Section
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack {
-                            Text("Input String")
-                                .font(.headline)
-                                .foregroundColor(.primary)
+                VStack(spacing: 30) {
+                    
+                    Text("String Calculator")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .padding(.vertical, 25)
+                    
+                    VStack(spacing: 25) {
+                        // Input Section
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                Text("Input String")
+                                    .font(.headline)
+                                    .foregroundColor(.primary)
+                            }
+                            
+                            ZStack(alignment: .topLeading) {
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(Color(.systemGray6))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .stroke(userText.isEmpty ? Color.gray.opacity(0.3) : Color.blue, lineWidth: 2)
+                                    )
+                                
+                                TextField("Enter your input here", text: $userText)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 15)
+                                    .background(Color.clear)
+                                    .scrollContentBackground(.hidden)
+                                    .accessibilityIdentifier("numbersTextField")
+                            }
+                            .frame(height: 50)
                         }
                         
-                        ZStack(alignment: .topLeading) {
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(Color(.systemGray6))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .stroke(userText.isEmpty ? Color.gray.opacity(0.3) : Color.blue, lineWidth: 2)
-                                )
-                            
-                            if userText.isEmpty {
-                                Text("Enter your input here")
-                                    .foregroundColor(.gray)
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 15)
-                            }
-                            
-                            TextEditor(text: $userText)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 8)
-                                .background(Color.clear)
-                                .scrollContentBackground(.hidden)
-                                .accessibilityIdentifier("numbersTextField")
+                        // Calculate Button
+                        Button(action: calculateSum) {
+                            buttonView()
                         }
-                        .frame(height: 100)
-                    }
-                    
-                    // Calculate Button
-                    Button(action: calculateSum) {
-                        buttonView()
-                    }
-                    .accessibilityIdentifier("calculate")
-                    .disabled(isCalculating)
-                    .scaleEffect(isCalculating ? 0.95 : 1.0)
-                    
-                    // Result Section
-                    if showResultWihValue.0 {
-                        VStack(spacing: 15) {
-                            if !errorMessage.isEmpty {
-                                // Error Display
-                                errorView()
-                            } else if let result = showResultWihValue.1 {
-                                // Success Display
-                                resultView(result: result)
+                        .accessibilityIdentifier("calculate")
+                        .disabled(isCalculating)
+                        .scaleEffect(isCalculating ? 0.95 : 1.0)
+                        
+                        // Result Section
+                        if showResultWihValue.0 {
+                            VStack(spacing: 15) {
+                                if !errorMessage.isEmpty {
+                                    // Error Display
+                                    errorView()
+                                } else if let result = showResultWihValue.1 {
+                                    // Success Display
+                                    resultView(result: result)
+                                }
+                            }
+                        }
+                        
+                        // Clear Button
+                        if showResultWihValue.0 {
+                            Button(action: clearCalculator) {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "arrow.clockwise")
+                                    Text("Clear & Start Over")
+                                }
+                                .font(.subheadline)
+                                .foregroundColor(.blue)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 44)
+                                .background(Color.blue.opacity(0.2))
+                                .cornerRadius(12)
                             }
                         }
                     }
+                    .padding(25)
+                    .background(.ultraThinMaterial)
+                    .cornerRadius(24)
                     
-                    // Clear Button
-                    if showResultWihValue.0 {
-                        Button(action: clearCalculator) {
-                            HStack(spacing: 8) {
-                                Image(systemName: "arrow.clockwise")
-                                Text("Clear & Start Over")
-                            }
-                            .font(.subheadline)
-                            .foregroundColor(.blue)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 44)
-                            .background(Color.blue.opacity(0.2))
-                            .cornerRadius(12)
-                        }
-                    }
+                    Spacer()
                 }
-                .padding(25)
-                .background(.ultraThinMaterial)
-                .cornerRadius(24)
-                
-                Spacer()
+                .padding(.horizontal, 20)
             }
-            .padding(.horizontal, 20)
         }
     }
     
