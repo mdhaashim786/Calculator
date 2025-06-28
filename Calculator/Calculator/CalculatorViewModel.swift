@@ -12,6 +12,19 @@ protocol CalculatorViewModelProtocol: ObservableObject {
     func add(_ numbers: String) -> Int
 }
 
+// Custom error type for negative numbers
+enum CalculatorError: Error, LocalizedError {
+    case negativeNumbers([Int])
+    
+    var errorDescription: String? {
+        switch self {
+        case .negativeNumbers(let numbers):
+            let numbersString = numbers.map(String.init).joined(separator: ", ")
+            return "Negative numbers not allowed: \(numbersString)"
+        }
+    }
+}
+
 class CalculatorViewModel: CalculatorViewModelProtocol {
     
     func add(_ numbers: String) -> Int {
@@ -46,8 +59,23 @@ class CalculatorViewModel: CalculatorViewModelProtocol {
         // Convert to integers
         let numbersArray = numberStrings.compactMap { Int($0) }
         
+        do {
+            try checkForNegativeNumbers(numbersArray)
+        } catch {
+            // show alert
+            return -1
+        }
+        
         // Use higher order functions
         return numbersArray.reduce(0) { result, number in result + number }
+    }
+    
+    func checkForNegativeNumbers(_ numbers: [Int]) throws {
+        // Check for negative numbers
+        let negativeNumbers = numbers.filter { $0 < 0 }
+        if !negativeNumbers.isEmpty {
+            throw CalculatorError.negativeNumbers(negativeNumbers)
+        }
     }
     
 }
