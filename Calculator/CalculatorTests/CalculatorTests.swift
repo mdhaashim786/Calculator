@@ -63,6 +63,11 @@ final class CalculatorTests: XCTestCase {
         XCTAssertThrowsError(try calculatorVM.add("1,-2,3,-5")) { error in
             XCTAssertEqual(error.localizedDescription, "Negative numbers not allowed: -2, -5")
         }
+        
+        XCTAssertThrowsError(try calculatorVM.add("Incubyte")) { error in
+            XCTAssertEqual(error.localizedDescription, "Please enter only numbers")
+        }
+        
     }
 
     func testPerformanceExample() throws {
