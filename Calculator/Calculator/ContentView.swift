@@ -11,32 +11,15 @@ struct ContentView<ViewModel: CalculatorViewModelProtocol>: View {
     
     @ObservedObject var viewModel: ViewModel
     @State var userText: String = ""
-    @State var result: Int?
     @State var isCalculating: Bool = false
-    
-    @State var showAlertWithTitle: (Bool, String) = (false,"")
+    @State private var errorMessage = ""
+    @State private var showResultWihValue: (Bool, Int?) = (false, nil)
     
     init(viewModel: ViewModel) {
         self.viewModel = viewModel
     }
     
     var body: some View {
-        VStack(spacing: 20) {
-            Text("String Calculator")
-                .font(.title)
-                .fontWeight(.bold)
-            
-            TextField("Enter numbers ", text: $userText)
-                .accessibilityIdentifier("numbersTextField")
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-            
-            // Calculate Button
-            Button(action: calculateSum) {
-                buttonView()
-            }
-            .disabled(isCalculating)
-            .scaleEffect(isCalculating ? 0.95 : 1.0)
-            .accessibilityIdentifier("calculate")
         ZStack {
             LinearGradient(
                 gradient: Gradient(colors: [
@@ -49,8 +32,67 @@ struct ContentView<ViewModel: CalculatorViewModelProtocol>: View {
             )
             .ignoresSafeArea()
             
-            if let myResult = result {
-                resultView(result: myResult)
+            VStack(spacing: 30) {
+                
+                Text("String Calculator")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .padding(.vertical, 25)
+                
+                VStack(spacing: 25) {
+                    // Input Section
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Text("Input String")
+                                .font(.headline)
+                                .foregroundColor(.primary)
+                        }
+                        
+                        ZStack(alignment: .topLeading) {
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color(.systemGray6))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(userText.isEmpty ? Color.gray.opacity(0.3) : Color.blue, lineWidth: 2)
+                                )
+                            
+                            if userText.isEmpty {
+                                Text("Enter your input here")
+                                    .foregroundColor(.gray)
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 15)
+                            }
+                            
+                            TextEditor(text: $userText)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(Color.clear)
+                                .scrollContentBackground(.hidden)
+                        }
+                        .frame(height: 100)
+                    }
+                    
+                    // Calculate Button
+                    Button(action: calculateSum) {
+                        buttonView()
+                    }
+                    .disabled(isCalculating)
+                    .scaleEffect(isCalculating ? 0.95 : 1.0)
+                    
+                    // Result Section
+                    if showResultWihValue.0 {
+                        VStack(spacing: 15) {
+                            if !errorMessage.isEmpty {
+                                // Error Display
+                                errorView()
+                            } else if let result = showResultWihValue.1 {
+                                // Success Display
+                                resultView(result: result)
+                            }
+                        }
+                    }
+                    
                     // Clear Button
                     if showResultWihValue.0 {
                         Button(action: clearCalculator) {
@@ -70,9 +112,10 @@ struct ContentView<ViewModel: CalculatorViewModelProtocol>: View {
                 .padding(25)
                 .background(.ultraThinMaterial)
                 .cornerRadius(24)
+                
+                Spacer()
             }
-            
-            Spacer()
+            .padding(.horizontal, 20)
         }
     }
     
@@ -82,18 +125,19 @@ struct ContentView<ViewModel: CalculatorViewModelProtocol>: View {
             errorMessage = ""
             showResultWihValue = (false, nil)
         }
-        .padding()
     }
+    
     
     func calculateSum() {
         isCalculating = true
-        
+        errorMessage = ""
         // Add delay for animation effect
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
             do {
-                result = try viewModel.add(userText)
+                showResultWihValue = (true, try viewModel.add(userText))
             } catch {
-                showAlertWithTitle = (true, error.localizedDescription)
+                errorMessage = error.localizedDescription
+                showResultWihValue = (true, nil)
             }
             isCalculating = false
         }
